@@ -44,6 +44,7 @@
 #define NBINITEMS 255 //Number of items per bin
 #define SZBIN 4
 #define SZUUID 40
+#define SZKEY 1024
 #define NBINSCALE 2 // Scaling factor of the entire datastructure
 
 #define HDBG(...) if (HASHDEBUG) fprintf(stderr, __VA_ARGS__)
@@ -80,6 +81,7 @@ typedef struct pibs_s {
     int errno_pibs;
     char *filename;
     char *uuid;
+    char *key;
     int should_dump_table;
     int show_backscatter;
     int show_stats;
@@ -338,6 +340,7 @@ pibs_t* init(void)
     pibs->data = calloc(pibs->data_size,1);
     pibs->filename = calloc(FILENAME_MAX,1);
     pibs->uuid = calloc(SZUUID,1);
+    pibs->key = calloc(SZKEY,1);
     printf("#Internal look up structure size in bytes: %ld\n",  pibs->data_size);
     // Build header
     pibs->data[0]='P';
@@ -460,6 +463,10 @@ int main(int argc, char* argv[])
                     strerror(pibs->errno_copy));
             return EXIT_FAILURE;
         }
+    }
+    if (pibs->uuid[0]) {
+        snprintf(pibs->key, SZKEY, "analyzer:1:%s",pibs->uuid);
+        printf("key: %s\n", pibs->key);
     }
     if (pibs->filename[0]) {
         process_file(pibs);
