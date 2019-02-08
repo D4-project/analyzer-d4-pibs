@@ -43,6 +43,7 @@
 #define NBINS 1024 //Number of bins
 #define NBINITEMS 255 //Number of items per bin
 #define SZBIN 4
+#define SZUUID 40
 #define NBINSCALE 2 // Scaling factor of the entire datastructure
 
 #define HDBG(...) if (HASHDEBUG) fprintf(stderr, __VA_ARGS__)
@@ -78,6 +79,7 @@ typedef struct pibs_s {
     int errno_copy;
     int errno_pibs;
     char *filename;
+    char *uuid;
     int should_dump_table;
     int show_backscatter;
     int show_stats;
@@ -335,6 +337,7 @@ pibs_t* init(void)
     pibs->data_size = sizeof(pibs_header_t) + NBINSCALE * NBINS * SZBIN * NBINITEMS * sizeof(item_t);
     pibs->data = calloc(pibs->data_size,1);
     pibs->filename = calloc(FILENAME_MAX,1);
+    pibs->uuid = calloc(SZUUID,1);
     printf("#Internal look up structure size in bytes: %ld\n",  pibs->data_size);
     // Build header
     pibs->data[0]='P';
@@ -408,7 +411,7 @@ int main(int argc, char* argv[])
 
     fprintf(stderr, "[INFO] pid = %d\n",(int)getpid());
 
-    while ((opt = getopt(argc, argv, "r:dbsni:a")) != -1) {
+    while ((opt = getopt(argc, argv, "r:dbsni:au:")) != -1) {
         switch (opt) {
             case 'r':
                 strncpy(pibs->filename, optarg, FILENAME_MAX);
@@ -430,6 +433,9 @@ int main(int argc, char* argv[])
                 break;
             case 'a':
                 pibs->should_attach = 1;
+                break;
+            case 'u':
+                strncpy(pibs->uuid, optarg, SZUUID);
                 break;
 
             default: /* '?' */
