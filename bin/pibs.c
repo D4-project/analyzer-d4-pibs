@@ -422,6 +422,8 @@ void process_redis_list(pibs_t* pibs)
                 rtype = reply->type;
                 if (rtype == REDIS_REPLY_STRING ) {
                      printf("#Need to proces file %s\n", reply->str);
+                     strncpy(pibs->filename,  reply->str, FILENAME_MAX);
+                     process_file(pibs);
                 }
                 freeReplyObject(reply);
             }
