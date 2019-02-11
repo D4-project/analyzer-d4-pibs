@@ -476,7 +476,10 @@ int main(int argc, char* argv[])
     }
     if (pibs->uuid[0]) {
         snprintf(pibs->key, SZKEY, "analyzer:1:%s",pibs->uuid);
-        printf("key: %s\n", pibs->key);
+        if ((pibs->server[0] == 0) || (pibs->port == 0)) {
+            fprintf(stderr,"Redis parameter server and port are incomplete. Use -z and -p options.\n");
+            return EXIT_FAILURE;
+        }
     }
     if (pibs->filename[0]) {
         process_file(pibs);
