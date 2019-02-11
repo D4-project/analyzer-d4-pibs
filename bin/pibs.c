@@ -85,6 +85,7 @@ typedef struct pibs_s {
     char *key;
     char *server;
     uint16_t port;
+    redisContext *ctx;
     int should_dump_table;
     int show_backscatter;
     int show_stats;
@@ -408,6 +409,31 @@ void pibs_dump_stats(pibs_t* pibs)
     printf("#Number of unique IP addresses: %ld\n", sum);
 }
 
+void process_redis_list(pibs_t* pibs)
+{
+    redisReply *reply;
+    int rtype;
+    snprintf(pibs->key, SZKEY, "analyzer:1:%s",pibs->uuid);
+    pibs->ctx = redisConnect(pibs->server, pibs->port);
+    if (pibs->ctx != NULL) {
+        do {
+            reply = redisCommand(pibs->ctx,"LPOP %s", pibs->key);
+            if (reply) {
+                rtype = reply->type;
+                if (rtype == REDIS_REPLY_STRING ) {
+                     printf("#Need to proces file %s\n", reply->str);
+                }
+                freeReplyObject(reply);
+            }
+        } while (rtype != REDIS_REPLY_NIL);
+    } else {
+        if (pibs->ctx->errstr) {
+            fprintf(stderr,  "Cannot connect to redis. Cause=%s\n",pibs->ctx->errstr);
+        }
+    }
+}
+
+
 int main(int argc, char* argv[])
 {
 
@@ -475,11 +501,11 @@ int main(int argc, char* argv[])
         }
     }
     if (pibs->uuid[0]) {
-        snprintf(pibs->key, SZKEY, "analyzer:1:%s",pibs->uuid);
         if ((pibs->server[0] == 0) || (pibs->port == 0)) {
             fprintf(stderr,"Redis parameter server and port are incomplete. Use -z and -p options.\n");
             return EXIT_FAILURE;
         }
+        process_redis_list(pibs);
     }
     if (pibs->filename[0]) {
         process_file(pibs);
