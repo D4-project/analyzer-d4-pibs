@@ -514,6 +514,7 @@ int main(int argc, char* argv[])
     }
     if (pibs->should_dump_table){
         pibs_dump_raw(pibs);
+        pibs_dump_raw(pibs);
     }
     if (pibs->show_stats){
         pibs_dump_stats(pibs);
