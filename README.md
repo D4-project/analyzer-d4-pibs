@@ -11,6 +11,8 @@ As there were some changes in libwiretap, at least the version 2.6.3-1 is needed
 apt-get install libwiretap-dev
 apt-get install libhiredis-dev
 apt-get install libwsutil-dev
+apt-get install libpcap-dev
+apt-get install libglib2.0-dev
 make
 ```
 
