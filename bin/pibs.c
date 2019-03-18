@@ -105,6 +105,8 @@ typedef struct pibs_s {
     int shmid;
     char shmid_file [FILENAME_MAX];
     char outputfile[FILENAME_MAX];
+    pcap_dumper_t* dumper;
+    pcap_t* outcap;
 } pibs_t;
 
 int load_shmid_file(pibs_t* pibs)
@@ -515,6 +517,17 @@ int main(int argc, char* argv[])
         }
         process_redis_list(pibs);
     }
+
+    //FIXME Add proper error handling for writecap
+    if (pibs->should_writepcap) {
+        pibs->outcap = pcap_open_dead(DLT_EN10MB, 65535);
+        pibs->dumper = pcap_dump_open(pibs->outcap, pibs->outputfile);
+        if (pibs->dumper == NULL) {
+            printf("Failed to open outputfile. Reason=%s\n",  pcap_geterr(pibs->outcap));
+            return EXIT_FAILURE;
+        }
+    }
+
     if (pibs->show_backscatter)
         printf("#source IP, TCP flags, source port\n");
     if (pibs->filename[0]) {
