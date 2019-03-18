@@ -509,6 +509,8 @@ int main(int argc, char* argv[])
         }
         process_redis_list(pibs);
     }
+    if (pibs->show_backscatter)
+        printf("#source IP, TCP flags, source port\n");
     if (pibs->filename[0]) {
         process_file(pibs);
     }
