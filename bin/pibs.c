@@ -91,6 +91,7 @@ typedef struct pibs_s {
     int show_stats;
     int should_create_shm;
     int should_attach;
+    int should_writepcap;
     //TODO use self contained data structure that can be easily serialized
     //Put data structure in an entire block to easier serialize
     uint8_t *data;
@@ -103,6 +104,7 @@ typedef struct pibs_s {
     item_t* items;
     int shmid;
     char shmid_file [FILENAME_MAX];
+    char outputfile[FILENAME_MAX];
 } pibs_t;
 
 int load_shmid_file(pibs_t* pibs)
@@ -446,7 +448,7 @@ int main(int argc, char* argv[])
 
     fprintf(stderr, "[INFO] pid = %d\n",(int)getpid());
 
-    while ((opt = getopt(argc, argv, "r:dbsni:au:z:p:")) != -1) {
+    while ((opt = getopt(argc, argv, "r:dbsni:au:z:p:w:")) != -1) {
         switch (opt) {
             case 'r':
                 strncpy(pibs->filename, optarg, FILENAME_MAX);
@@ -477,6 +479,10 @@ int main(int argc, char* argv[])
                 break;
             case 'p':
                 pibs->port=atoi(optarg);
+                break;
+            case 'w':
+                strncpy(pibs->outputfile,optarg, FILENAME_MAX);
+                pibs->should_writepcap = 1;
                 break;
 
             default: /* '?' */
