@@ -256,12 +256,18 @@ void insert_ip(pibs_t* pibs, uint32_t ip, uint32_t ts)
 }
 
 void process_frame(pibs_t* pibs, wtap *wth,
-                   uint8_t *buf, size_t length)
+                   uint8_t *eth)
 {
     struct ip* ipv4;
     uint32_t ip;
     struct tcphdr* tcp;
     int_fast64_t lastseen;
+    unsigned char* buf;
+    size_t length;
+    struct pcap_pkthdr pchdr;
+
+    buf = eth+14;
+    length = wth->rec.rec_header.packet_header.caplen-14;
 
     if (length < sizeof(struct ip)) {
         return;
@@ -297,6 +303,14 @@ void process_frame(pibs_t* pibs, wtap *wth,
     }
     //TODO relative time
     //Purge old ips?
+    if (pibs->should_writepcap) {
+        pchdr.ts.tv_sec = wth->rec.ts.secs;
+        //TODO other part of the timestamp
+        pchdr.ts.tv_usec = 0;
+        pchdr.caplen =  wth->rec.rec_header.packet_header.caplen;
+        pchdr.len =  wth->rec.rec_header.packet_header.len;
+        pcap_dump((u_char*)pibs->dumper, &pchdr, eth);
+    }
 }
 
 void process_file(pibs_t* pibs)
@@ -325,7 +339,7 @@ void process_file(pibs_t* pibs)
                 ethertype = buf[12] << 8 | buf[13];
                 // TODO Focus on IPv4 only
                 if (ethertype == 0x0800) {
-                    process_frame(pibs, wth, buf+14, wth->rec.rec_header.packet_header.caplen -14);
+                    process_frame(pibs, wth, buf);
                 }
             }
         }
