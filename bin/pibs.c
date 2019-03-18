@@ -306,7 +306,7 @@ void process_frame(pibs_t* pibs, wtap *wth,
     if (pibs->should_writepcap) {
         pchdr.ts.tv_sec = wth->rec.ts.secs;
         //TODO other part of the timestamp
-        pchdr.ts.tv_usec = 0;
+        pchdr.ts.tv_usec = wth->rec.ts.nsecs / 1000;
         pchdr.caplen =  wth->rec.rec_header.packet_header.caplen;
         pchdr.len =  wth->rec.rec_header.packet_header.len;
         pcap_dump((u_char*)pibs->dumper, &pchdr, eth);
@@ -553,6 +553,9 @@ int main(int argc, char* argv[])
     }
     if (pibs->show_stats){
         pibs_dump_stats(pibs);
+    }
+    if (pibs->should_writepcap) {
+        pcap_dump_close(pibs->dumper);
     }
     return EXIT_FAILURE;
 }
