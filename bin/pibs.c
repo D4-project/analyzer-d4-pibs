@@ -288,7 +288,7 @@ void process_frame(pibs_t* pibs, wtap *wth,
     }
     // TODO keep these IPs in a hashtable and rank them
     if (pibs->show_backscatter) {
-        printf("Potential backscatter. IP. %s. TCP flags: %d. Source port:%d \n",
+        printf("%s,%d,%d\n",
                inet_ntoa(ipv4->ip_src), tcp->th_flags, ntohs(tcp->th_sport));
     }
     //TODO relative time
