@@ -28,6 +28,11 @@ standard output. The worker queue should include absolute filenames.
 In the example the redis server server is listening on port 6379 on the interface 127.0.0.1.
 The string e344c4fb-442e-45a6-92b9-d8e30aeef448 is the uuid that must be inline with the
 worker.
+
+pibs -r source.cap.gz -w backscatter.cap
+
+Read the file source.cap.gz, identify potential backscatter and store it in the
+file backscatter.cap to be further analysed with other tools such as wireshark
 ```
 
 
