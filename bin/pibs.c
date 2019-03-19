@@ -107,6 +107,7 @@ typedef struct pibs_s {
     char outputfile[FILENAME_MAX];
     pcap_dumper_t* dumper;
     pcap_t* outcap;
+    uint32_t redisdb;
 } pibs_t;
 
 int load_shmid_file(pibs_t* pibs)
@@ -434,6 +435,19 @@ void process_redis_list(pibs_t* pibs)
     snprintf(pibs->key, SZKEY, "analyzer:1:%s",pibs->uuid);
     pibs->ctx = redisConnect(pibs->server, pibs->port);
     if (pibs->ctx != NULL) {
+        if (pibs->redisdb >0)   {
+            printf("[INFO] Select redis database %d\n", pibs->redisdb);
+            reply = redisCommand(pibs->ctx, "SELECT %d", pibs->redisdb);
+            if (reply) {
+                rtype = reply->type;
+                freeReplyObject(reply);
+                if (rtype != REDIS_REPLY_STATUS) {
+                    printf("[ERROR] Cannot switch to database %d. Abort.",
+                            pibs->redisdb);
+                    return;
+                }
+            }
+        }
         do {
             reply = redisCommand(pibs->ctx,"LPOP %s", pibs->key);
             if (reply) {
@@ -464,7 +478,7 @@ int main(int argc, char* argv[])
 
     fprintf(stderr, "[INFO] pid = %d\n",(int)getpid());
 
-    while ((opt = getopt(argc, argv, "r:dbsni:au:z:p:w:")) != -1) {
+    while ((opt = getopt(argc, argv, "r:dbsni:au:z:p:w:y:")) != -1) {
         switch (opt) {
             case 'r':
                 strncpy(pibs->filename, optarg, FILENAME_MAX);
@@ -499,6 +513,9 @@ int main(int argc, char* argv[])
             case 'w':
                 strncpy(pibs->outputfile,optarg, FILENAME_MAX);
                 pibs->should_writepcap = 1;
+                break;
+            case 'y':
+                pibs->redisdb = atoi(optarg);
                 break;
 
             default: /* '?' */
