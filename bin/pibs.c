@@ -556,6 +556,7 @@ int main(int argc, char* argv[])
     }
     if (pibs->should_writepcap) {
         pcap_dump_close(pibs->dumper);
+        printf("[INFO] Created pcap file %s\n", pibs->outputfile);
     }
     return EXIT_FAILURE;
 }
