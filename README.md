@@ -55,3 +55,15 @@ pibs -n -i myinstance.shm
 
 Create a shared memory and store the segment identifier in the file
 myinstance.shm
+
+pibs -r pcapfile.cap.gz -a -i instance.shm
+
+Read pcapfile.cap.gz identify potential backscatter and store it in the
+shared memory segment with the identifier stored in the file instance.shm.
+The previous states are taken into account.
+
+pibs -i instance.shm -a -s
+
+Display the usage of the internal hash table from the shared memory segment
+specified in the file instance.shm. This command can be executed in parallel
+while another pibs instance is filling it.
