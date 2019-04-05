@@ -50,3 +50,8 @@ pibs -n
 
 Create fresh internal data structure as shared memory for multi processing
 purposes. The segment id is displayed on standard output.
+
+pibs -n -i myinstance.shm
+
+Create a shared memory and store the segment identifier in the file
+myinstance.shm
