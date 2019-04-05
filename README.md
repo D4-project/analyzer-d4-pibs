@@ -45,3 +45,8 @@ pibs -r pcapfile.cap -d
 
 Dump the internal data structures for debugging purposes from the processing
 of the pcapfile.
+
+pibs -n
+
+Create fresh internal data structure as shared memory for multi processing
+purposes. The segment id is displayed on standard output.
