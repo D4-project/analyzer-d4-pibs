@@ -36,4 +36,7 @@ Read the file source.cap.gz, identify potential backscatter and store it in the
 file backscatter.cap to be further analysed with other tools such as wireshark
 ```
 
+pibs -r pcapfile.cap -s
 
+Read the file source.cap, identify potential backscatter and display the
+usage of the used internal hash table. Feature for debugging purpose.
