@@ -40,3 +40,8 @@ pibs -r pcapfile.cap -s
 
 Read the file source.cap, identify potential backscatter and display the
 usage of the used internal hash table. Feature for debugging purpose.
+
+pibs -r pcapfile.cap -d
+
+Dump the internal data structures for debugging purposes from the processing
+of the pcapfile.
