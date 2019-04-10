@@ -450,7 +450,7 @@ void process_redis_list(pibs_t* pibs)
             }
         }
         do {
-            reply = redisCommand(pibs->ctx,"LPOP %s", pibs->key);
+            reply = redisCommand(pibs->ctx,"RPOP %s", pibs->key);
             if (reply) {
                 rtype = reply->type;
                 if (rtype == REDIS_REPLY_STRING ) {
