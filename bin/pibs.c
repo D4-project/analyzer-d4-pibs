@@ -24,12 +24,9 @@ void process_frame(pibs_t* pibs, wtap *wth,
                    uint8_t *eth)
 {
     struct ip* ipv4;
-    uint32_t ip;
     struct tcphdr* tcp;
-    int_fast64_t lastseen;
     unsigned char* buf;
     size_t length;
-    struct pcap_pkthdr pchdr;
 
     buf = eth+14;
     length = wth->rec.rec_header.packet_header.caplen-14;
@@ -46,37 +43,9 @@ void process_frame(pibs_t* pibs, wtap *wth,
 
     tcp = (struct tcphdr*)(buf+sizeof(struct ip));
 
-    memcpy(&ip, &ipv4->ip_src, 4);
-    // Record only source ips where syn flag is set
-    // TODO check other connection establishment alternatives
-    if (tcp->th_flags  == 2 ){
-        insert_ip(pibs, ip, wth->rec.ts.secs);
-        return;
-    }
+    synseen_process_frame(pibs, wth, eth, ipv4, tcp);
 
-    lastseen =  get_last_timestamp(pibs, ip);
-
-    if (lastseen > 0){
-        HDBG("IP %x %s was already seen before at %ld. Time difference %ld.\n"
-               , ip, inet_ntoa(ipv4->ip_src), lastseen, wth->rec.ts.secs-lastseen);
-        return;
-    }
-    // TODO keep these IPs in a hashtable and rank them
-    if (pibs->show_backscatter) {
-        printf("%ld,%s,%d,%d\n",
-               wth->rec.ts.secs, inet_ntoa(ipv4->ip_src), tcp->th_flags,
-               ntohs(tcp->th_sport));
-    }
-    //TODO relative time
-    //Purge old ips?
-    if (pibs->should_writepcap) {
-        pchdr.ts.tv_sec = wth->rec.ts.secs;
-        //TODO other part of the timestamp
-        pchdr.ts.tv_usec = wth->rec.ts.nsecs / 1000;
-        pchdr.caplen =  wth->rec.rec_header.packet_header.caplen;
-        pchdr.len =  wth->rec.rec_header.packet_header.len;
-        pcap_dump((u_char*)pibs->dumper, &pchdr, eth);
-    }
+    //Put other frame processing activities here
 }
 
 void process_file(pibs_t* pibs)
