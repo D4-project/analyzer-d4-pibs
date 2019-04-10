@@ -19,7 +19,7 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef _PIBS_H_
-#define PIBS
+#define _PIBS_H_
 
 #include <stdio.h>
 #include <stdlib.h>
