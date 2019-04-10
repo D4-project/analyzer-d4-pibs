@@ -299,8 +299,9 @@ void process_frame(pibs_t* pibs, wtap *wth,
     }
     // TODO keep these IPs in a hashtable and rank them
     if (pibs->show_backscatter) {
-        printf("%s,%d,%d\n",
-               inet_ntoa(ipv4->ip_src), tcp->th_flags, ntohs(tcp->th_sport));
+        printf("%ld,%s,%d,%d\n",
+               wth->rec.ts.secs, inet_ntoa(ipv4->ip_src), tcp->th_flags,
+               ntohs(tcp->th_sport));
     }
     //TODO relative time
     //Purge old ips?
@@ -560,7 +561,7 @@ int main(int argc, char* argv[])
     }
 
     if (pibs->show_backscatter)
-        printf("#source IP, TCP flags, source port\n");
+        printf("#timestamp, source IP, TCP flags, source port\n");
     if (pibs->filename[0]) {
         process_file(pibs);
     }
