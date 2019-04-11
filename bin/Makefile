@@ -1,3 +1,12 @@
+all:	pibs pibs-stat
+
+pibs-stat:	pibs-stat.o libpibs.o memutils.o synseen.o
+	gcc -Wall -o pibs-stat pibs-stat.o libpibs.o memutils.o synseen.o -lwiretap `pkg-config --libs glib-2.0` -lpcap -lhiredis -ggdb
+
+
+pibs-stat.o:	pibs-stat.c
+	gcc -D HASHDEBUG=0 -Wall -c pibs-stat.c  `pkg-config --cflags glib-2.0` -I /usr/include/wireshark/wiretap -I /usr/include/wireshark/wsutil -I /usr/include/wireshark `pkg-config --libs glib-2.0` -I /usr/local/include/hiredis -ggdb
+
 pibs:		pibs.o memutils.o synseen.o libpibs.o
 	gcc -Wall -o pibs pibs.o memutils.o synseen.o libpibs.o -lwiretap `pkg-config --libs glib-2.0` -lpcap -lhiredis -ggdb
 
