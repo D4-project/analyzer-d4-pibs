@@ -175,3 +175,31 @@ void synseen_process_frame(pibs_t *pibs, wtap *wth, uint8_t* eth,
         pcap_dump((u_char*)pibs->dumper, &pchdr, eth);
     }
 }
+
+int synseen_init(pibs_t* pibs)
+{
+    pibs->data_size = sizeof(pibs_header_t) + NBINSCALE * NBINS * SZBIN * NBINITEMS * sizeof(item_t);
+    pibs->data = calloc(pibs->data_size,1);
+    printf("#Internal look up structure size in bytes: %ld\n",  pibs->data_size);
+    // Build header
+    pibs->data[0]='P';
+    pibs->data[1] = 'I';
+    pibs->data[2] = 'B';
+    pibs->data[3] = 'S';
+    pibs->data[4] = 1; //version 1
+
+    pibs->next_block = sizeof(pibs_header_t);
+    pibs->bin_offset = pibs->next_block;
+    printf("#data address is %p\n",pibs->data);
+    pibs->bin_table = (uint32_t*)(pibs->data+pibs->bin_offset);
+    printf("#bin_table address is %p\n", pibs->bin_table);
+    // Create bins
+    pibs->next_block+=SZBIN * NBINS;
+    printf("#next block %d\n", pibs->next_block);
+    pibs->items = (item_t*)(pibs->data+pibs->next_block);
+    pibs->next_item = 0;
+    printf("#items are address %p\n", pibs->items);
+    pibs->max_item = NBINS * NBINITEMS;
+    printf("#max_item: %d\n", pibs->max_item);
+    return 1;
+}
