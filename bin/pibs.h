@@ -126,4 +126,5 @@ void process_redis_list(pibs_t* pibs);
 void synseen_process_frame(pibs_t *pibs, wtap *wth, uint8_t* eth,
                            struct ip* ipv4, struct tcphdr* tcp);
 int synseen_init(pibs_t* pibs);
+pibs_t* init(void);
 #endif
