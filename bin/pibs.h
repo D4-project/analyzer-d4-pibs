@@ -111,6 +111,7 @@ typedef struct pibs_s {
     pcap_dumper_t* dumper;
     pcap_t* outcap;
     uint32_t redisdb;
+    void* synseen_callback;
 } pibs_t;
 
 int load_shmid_file(pibs_t* pibs);
@@ -127,4 +128,8 @@ void synseen_process_frame(pibs_t *pibs, wtap *wth, uint8_t* eth,
                            struct ip* ipv4, struct tcphdr* tcp);
 int synseen_init(pibs_t* pibs);
 pibs_t* init(void);
+
+typedef void (* synseen_callback_t)(pibs_t* pibs, wtap *wth, uint8_t* eth,
+struct ip* ipv4, struct tcphdr* tcp);
+
 #endif

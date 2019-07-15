@@ -36,6 +36,11 @@ void usage(void)
     printf("<directory>/port/year/month/year-month-day.txt\n");
 }
 
+void frame_to_bgpr(pibs_t* pibs, wtap *wth, uint8_t* eth,
+struct ip* ipv4, struct tcphdr* tcp)
+{
+}
+
 int main(int argc, char* argv[])
 {
     pibs_t* pibs;
@@ -54,6 +59,9 @@ int main(int argc, char* argv[])
                 break;
         }
     }
+
+    //Set call back function
+    pibs->synseen_callback = &frame_to_bgpr;
 
     if (pibs->filename[0]) {
         process_file(pibs);

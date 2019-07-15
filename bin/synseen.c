@@ -140,6 +140,7 @@ void pibs_dump_stats(pibs_t* pibs)
 void synseen_process_frame(pibs_t *pibs, wtap *wth, uint8_t* eth,
                            struct ip* ipv4, struct tcphdr* tcp)
 {
+    synseen_callback_t synseen_callback;
     int_fast64_t lastseen;
     uint32_t ip;
     struct pcap_pkthdr pchdr;
@@ -173,6 +174,10 @@ void synseen_process_frame(pibs_t *pibs, wtap *wth, uint8_t* eth,
         pchdr.caplen =  wth->rec.rec_header.packet_header.caplen;
         pchdr.len =  wth->rec.rec_header.packet_header.len;
         pcap_dump((u_char*)pibs->dumper, &pchdr, eth);
+    }
+    if (pibs->synseen_callback) {
+        synseen_callback = pibs->synseen_callback;
+        synseen_callback(pibs, wth, eth, ip, tcp);
     }
 }
 
