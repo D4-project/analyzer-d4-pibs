@@ -48,16 +48,25 @@ char* create_path(pibs_t* pibs, uint16_t port, uint64_t ts)
         snprintf(s,32,"%ld",ts);
         if (strptime(s,"%s",&tm)){
             strftime((char*)&s,32,"%Y-%m-%d", &tm);
+            //TODO use date sub-directory in case of too many files
+            snprintf(out, 2*FILENAME_MAX, "%s/%d/%s.txt",pibs->outputfile,port,s);
+            return out;
         }
     }
     //Something went wrong
     return NULL;
 }
 
+//FIXME avoid mem allocation functions for each packet do them globaly per file
 void frame_to_bgpr(pibs_t* pibs, wtap *wth, uint8_t* eth,
 struct ip* ipv4, struct tcphdr* tcp)
 {
-    create_path(pibs, ntohs(tcp->th_sport), wth->rec.ts.secs);
+    char *dirname;
+    dirname = create_path(pibs, ntohs(tcp->th_sport), wth->rec.ts.secs);
+    if (dirname) {
+        printf("%s\n", dirname);
+        free(dirname);
+    }
 }
 
 int main(int argc, char* argv[])
