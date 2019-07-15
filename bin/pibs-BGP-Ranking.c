@@ -75,6 +75,7 @@ int main(int argc, char* argv[])
                 break;
             case 'r':
                 strncpy(pibs->filename, optarg, FILENAME_MAX);
+                pibs->filename[FILENAME_MAX-1] = '\0';
                 break;
         }
     }
