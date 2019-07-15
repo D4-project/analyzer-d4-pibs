@@ -19,6 +19,8 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 #include <stdio.h>
+#define __USE_XOPEN
+#include <time.h>
 #include "pibs.h"
 
 void usage(void)
@@ -36,9 +38,26 @@ void usage(void)
     printf("<directory>/port/year/month/year-month-day.txt\n");
 }
 
+char* create_path(pibs_t* pibs, uint16_t port, uint64_t ts)
+{
+    struct tm tm;
+    char  s[32];
+    char *out;
+    out = calloc(1,FILENAME_MAX);
+    if (out) {
+        snprintf(s,32,"%ld",ts);
+        if (strptime(s,"%s",&tm)){
+            strftime((char*)&s,32,"%Y-%m-%d", &tm);
+        }
+    }
+    //Something went wrong
+    return NULL;
+}
+
 void frame_to_bgpr(pibs_t* pibs, wtap *wth, uint8_t* eth,
 struct ip* ipv4, struct tcphdr* tcp)
 {
+    create_path(pibs, ntohs(tcp->th_sport), wth->rec.ts.secs);
 }
 
 int main(int argc, char* argv[])
