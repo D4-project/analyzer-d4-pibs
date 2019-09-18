@@ -20,6 +20,18 @@
 */
 #include "pibs.h"
 
+void usage(void)
+{
+    printf("Usage: pibs [OPTION] ...\n");
+    printf("Identify backscatter in pacp files\n");
+    printf("\nOPTIONS\n");
+    printf("\n    -n Create new shared memory segment data structure\n");
+    printf("\n    -i Write shared segment identifier in a file.\n");
+    printf("       This option must be used in conjuntion with -n option\n");
+    printf("      -r read pcap files and identity potential backscatter traffic\n");
+    printf("      -b Show potential backscatter on stdout. The be used in conjuntion with -r\n");
+}
+
 int main(int argc, char* argv[])
 {
 
@@ -30,7 +42,7 @@ int main(int argc, char* argv[])
 
     fprintf(stderr, "[INFO] pid = %d\n",(int)getpid());
 
-    while ((opt = getopt(argc, argv, "r:dbsni:au:z:p:w:y:")) != -1) {
+    while ((opt = getopt(argc, argv, "r:dbsni:au:z:p:w:y:h")) != -1) {
         switch (opt) {
             case 'r':
                 strncpy(pibs->filename, optarg, FILENAME_MAX);
@@ -69,7 +81,9 @@ int main(int argc, char* argv[])
             case 'y':
                 pibs->redisdb = atoi(optarg);
                 break;
-
+            case 'h':
+                usage();
+                break;
             default: /* '?' */
 
                 fprintf(stderr, "[ERROR] Invalid command line was specified\n");
