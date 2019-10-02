@@ -22,6 +22,7 @@
 #define __USE_XOPEN
 #include <time.h>
 #include "pibs.h"
+#include <gmodule.h>
 
 void usage(void)
 {
@@ -69,13 +70,24 @@ struct ip* ipv4, struct tcphdr* tcp)
     }
 }
 
+gint cmp_ips(gconstpointer a, gconstpointer b)
+{
+    uint32_t* x;
+    uint32_t* y;
+    x = (uint32_t*)a;
+    y = (uint32_t*)b;
+    return *x<*y;
+}
+
 int main(int argc, char* argv[])
 {
     pibs_t* pibs;
     int opt;
-
-
+    GTree *ip_tree;
     pibs  = init();
+    uint32_t *y;
+    ip_tree = NULL;
+
     while ((opt = getopt(argc, argv, "hr:d:")) != -1) {
         printf("%d\n", opt);
         switch (opt) {
@@ -93,6 +105,24 @@ int main(int argc, char* argv[])
         }
     }
 
+    //sorted array insert operations -> o(n) not good if we have a lot of inserts
+    //Problem: memalloc per each ip address
+    //Problem: duplicates are added
+
+    // Gtree insert IP value several times
+     
+    y = calloc(1,sizeof(uint32_t));
+    *y = 34;
+//    ip_list = g_list_insert_sorted_with_data (ip_list,y,&cmp_ips,NULL);
+//    y = calloc(1,sizeof(uint32_t));
+//    *y = 34;
+//    ip_list = g_list_insert_sorted_with_data (ip_list,y,&cmp_ips,NULL);
+//    y = calloc(1,sizeof(uint32_t));
+//    *y = 99;
+//    ip_list = g_list_insert_sorted_with_data (ip_list,y,&cmp_ips,NULL);
+
+
+    return EXIT_SUCCESS;
     //Set call back function
     pibs->synseen_callback = &frame_to_bgpr;
 

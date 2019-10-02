@@ -177,7 +177,7 @@ void synseen_process_frame(pibs_t *pibs, wtap *wth, uint8_t* eth,
     }
     if (pibs->synseen_callback) {
         synseen_callback = pibs->synseen_callback;
-        synseen_callback(pibs, wth, eth, ip, tcp);
+        synseen_callback(pibs, wth, eth, ipv4, tcp);
     }
 }
 
