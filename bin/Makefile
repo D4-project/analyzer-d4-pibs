@@ -1,4 +1,4 @@
-all:	pibs pibs-stat pibs-BGP-Ranking
+all:	pibs pibs-stat pibs-BGP-Ranking pibs-isn
 
 pibs-stat:	pibs-stat.o libpibs.o memutils.o synseen.o
 	gcc -Wall -o pibs-stat pibs-stat.o libpibs.o memutils.o synseen.o -lwiretap `pkg-config --libs glib-2.0` -lpcap -lhiredis -ggdb
@@ -6,6 +6,12 @@ pibs-stat:	pibs-stat.o libpibs.o memutils.o synseen.o
 
 pibs-stat.o:	pibs-stat.c
 	gcc -D HASHDEBUG=0 -Wall -c pibs-stat.c  `pkg-config --cflags glib-2.0` -I /usr/include/wireshark/wiretap -I /usr/include/wireshark/wsutil -I /usr/include/wireshark `pkg-config --libs glib-2.0` -I /usr/local/include/hiredis -ggdb
+
+pibs-isn:	pibs-isn.o libpibs.o memutils.o synseen.o
+	gcc -Wall -o pibs-isn pibs-isn.o libpibs.o memutils.o synseen.o -lwiretap `pkg-config --libs glib-2.0` -lpcap -lhiredis -ggdb
+
+pibs-stat.o:	pibs-isn.c
+	gcc -D HASHDEBUG=0 -Wall -c pibs-isn.c  `pkg-config --cflags glib-2.0` -I /usr/include/wireshark/wiretap -I /usr/include/wireshark/wsutil -I /usr/include/wireshark `pkg-config --libs glib-2.0` -I /usr/local/include/hiredis -ggdb
 
 pibs-BGP-Ranking:	pibs pibs-BGP-Ranking.o libpibs.o memutils.o synseen.o
 	gcc -Wall -o pibs-BGP-Ranking pibs-BGP-Ranking.o libpibs.o memutils.o synseen.o -lwiretap `pkg-config --libs glib-2.0` -lpcap -lhiredis -ggdb
