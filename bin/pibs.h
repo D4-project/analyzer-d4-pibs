@@ -112,6 +112,7 @@ typedef struct pibs_s {
     pcap_t* outcap;
     uint32_t redisdb;
     void* synseen_callback;
+    int bypass;
 } pibs_t;
 
 int load_shmid_file(pibs_t* pibs);
