@@ -63,6 +63,8 @@ int main(int argc, char* argv[])
         }
     }
 
+    //Bypass synseen logic to get all TCP packets
+    pibs->bypass = 1;
     //Set call back function
     pibs->synseen_callback = &process;
 
